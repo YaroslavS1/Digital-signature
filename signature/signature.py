@@ -13,7 +13,7 @@ SIGNATURE = 'signature.sgn'
 SEPARATOR = '\n'
 
 
-def sanitaizee_key(key):
+def sanitize_key(key):
     list_string = key.split(r'\n')
     return f"{SEPARATOR.join(list_string)}"
 
@@ -60,8 +60,8 @@ def sign(path_to_private_key, path_to_the_file, path_to_the_signature):
 @click.option('-p_file', '--path_to_the_file', default=os.path.join(os.getcwd(), FILE), prompt='Enter path to file',
               type=click.Path(exists=True, dir_okay=False, readable=True), help=f'Path to file.')
 @click.option('-p_signature', '--like_signature', default=os.path.join(os.getcwd(), SIGNATURE),
-              prompt='Enter path to save signature', type=click.Path(exists=True, dir_okay=False, readable=True),
-              help=f'Path to save signature.')
+              prompt='Enter path to signature', type=click.Path(exists=True, dir_okay=False, readable=True),
+              help=f'Path to signature.')
 def verify(path_to_public_key, path_to_the_file, like_signature):
     """Verify signature."""
     try:
@@ -69,7 +69,7 @@ def verify(path_to_public_key, path_to_the_file, like_signature):
             f_key = open(path_to_public_key, 'r')
             pubkey = RSA.import_key(f_key.read())
         else:
-            pubkey = RSA.import_key(sanitaizee_key(path_to_public_key))
+            pubkey = RSA.import_key(sanitize_key(path_to_public_key))
     except Exception as e:
         raise ValueError(e)
 

@@ -77,7 +77,7 @@ Options:
   -p_file, --path_to_the_file FILE
                                   Path to file.
   -p_signature, --like_signature FILE
-                                  Path to save signature.
+                                  Path to signature.
   --help                          Show this message and exit.
 ```
 
