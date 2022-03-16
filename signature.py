@@ -49,7 +49,6 @@ def sign_file(path_to_private_key, path_to_the_file, path_to_the_signature):
               prompt='Enter path to signature', type=click.Path(exists=True, dir_okay=False, readable=True),
               help=f'Path to store signature')
 def verify_signature(path_to_public_key, path_to_the_file, path_to_the_signature):
-    print(path_to_public_key, path_to_the_file, path_to_the_signature)
     try:
         f_key = open(path_to_public_key, 'r')
         pubkey = RSA.import_key(f_key.read())
@@ -69,9 +68,10 @@ def verify_signature(path_to_public_key, path_to_the_file, path_to_the_signature
     try:
         pkcs1_15.new(pubkey).verify(h, signature)
     except ValueError:
-        raise ValueError('Signature is invalid')
+        # raise ValueError('Signature is invalid')
+        click.echo(f' The signature for file {path_to_the_file} not valid')
     else:
-        click.echo(f'the signature for file {path_to_the_file} is valid')
+        click.echo(f'The signature for file {path_to_the_file} is valid')
 
 
 @click.command()
@@ -110,7 +110,6 @@ def get_private_key(path):
 
 
 @click.group()
-# @click.option('--m', default='', prompt='enter the path', help=f'path to store private key')
 def cli():
     pass
 
