@@ -12,6 +12,7 @@ python -m venv venv
 python -e ./Digital-signature
 ```
 # Usage
+## Main command groups
 ```
 Usage: signature [OPTIONS] COMMAND [ARGS]...
 
