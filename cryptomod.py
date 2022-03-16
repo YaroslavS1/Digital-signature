@@ -111,15 +111,15 @@ def get_private_key(path):
 
 @click.group()
 # @click.option('--m', default='', prompt='enter the path', help=f'path to store private key')
-def main():
+def cli():
     pass
 
 
-main.add_command(get_private_key)
-main.add_command(get_public_key)
-main.add_command(sign_file)
-main.add_command(verify_signature)
+cli.add_command(get_private_key)
+cli.add_command(get_public_key)
+cli.add_command(sign_file)
+cli.add_command(verify_signature)
 
 
 if __name__ == '__main__':
-    main()
+    cli()
