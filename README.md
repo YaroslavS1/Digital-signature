@@ -7,6 +7,15 @@
 ```console
 python -m venv venv
 ```
+
+### Windows
+```console
+.\venv\Scripts\activate
+```
+### Linux/Mac OS
+```console
+source venv/bin/activate
+```
 ## install signature
 ```console
 pip install -e ./signature  
