@@ -1,17 +1,17 @@
 # Signature
 ## A simple script that implements a digital signature
 
-## Installation
+# Installation
 
-### install virtualenv
+## install virtualenv
 ```console
 python -m venv venv
 ```
-### install signature
+## install signature
 ```console
 python -e ./Digital-signature
 ```
-### Usage
+# Usage
 ```
 Usage: signature [OPTIONS] COMMAND [ARGS]...
 
