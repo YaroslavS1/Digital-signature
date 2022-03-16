@@ -8,7 +8,7 @@
 python -m venv venv
 ```
 ### install signature
-```shell
+```console
 python -e ./Digital-signature
 ```
 ### Usage
