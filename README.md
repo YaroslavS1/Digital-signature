@@ -9,7 +9,7 @@ python -m venv venv
 ```
 ## install signature
 ```console
-python -e ./Digital-signature
+pip install -e ./signature  
 ```
 # Usage
 ## Main command groups
