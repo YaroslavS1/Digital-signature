@@ -1,8 +1,9 @@
+import os
+
 import click
+from Crypto.Hash import SHA256
 from Crypto.PublicKey import RSA
 from Crypto.Signature import pkcs1_15
-from Crypto.Hash import SHA256
-import os
 
 PRIVATE_KEY = 'private_key.pem'
 PUBLIC_KEY = 'public_key.pem'
@@ -27,22 +28,22 @@ def get_hash(path_to_the_file):
 
 @click.command()
 @click.option('-p_private', '--path_to_private_key', default=os.path.join(os.getcwd(), PRIVATE_KEY),
-              prompt='Enter path to private key', type=click.Path(exists=True, dir_okay=False, readable=True),
-              help=f'Path to private key')
+              prompt='Enter path to private key', type=click.STRING,
+              help=f'Path to private key.')
 @click.option('-p_file', '--path_to_the_file', default=os.path.join(os.getcwd(), FILE), prompt='Enter path to file',
-              type=click.Path(exists=True, dir_okay=False, readable=True), help=f'Path to file')
+              type=click.Path(exists=True, dir_okay=False, readable=True), help=f'Path to file.')
 @click.option('-p_signature', '--path_to_the_signature', default=os.path.join(os.getcwd(), SIGNATURE),
               prompt='Enter path to save signature', type=click.Path(exists=False, dir_okay=False, readable=True),
-              help=f'Path to save signature')
+              help=f'Path to save signature.')
 def sign(path_to_private_key, path_to_the_file, path_to_the_signature):
-    """Sign file with digital signature"""
-    h = get_hash(path_to_the_file)
-
+    """Sign file with digital signature."""
     try:
         f = open(path_to_private_key, 'r')
         key = RSA.import_key(f.read())
     except FileNotFoundError:
         raise FileNotFoundError('Private key not found')
+
+    h = get_hash(path_to_the_file)
 
     signature = pkcs1_15.new(key).sign(h)
     f = open(path_to_the_signature, 'wb')
@@ -54,15 +55,15 @@ def sign(path_to_private_key, path_to_the_file, path_to_the_signature):
 
 @click.command()
 @click.option('-p_public', '--path_to_public_key', default=os.path.join(os.getcwd(), PUBLIC_KEY),
-              prompt='Enter path to public key or public key directly ', type=click.STRING,
-              help=f'Path to public key')
+              prompt='Enter path to public key or public key directly', type=click.STRING,
+              help=f'Path to public key or public key directly.')
 @click.option('-p_file', '--path_to_the_file', default=os.path.join(os.getcwd(), FILE), prompt='Enter path to file',
-              type=click.Path(exists=True, dir_okay=False, readable=True), help=f'Path to file')
+              type=click.Path(exists=True, dir_okay=False, readable=True), help=f'Path to file.')
 @click.option('-p_signature', '--like_signature', default=os.path.join(os.getcwd(), SIGNATURE),
               prompt='Enter path to save signature', type=click.Path(exists=True, dir_okay=False, readable=True),
-              help=f'Path to save signature')
+              help=f'Path to save signature.')
 def verify(path_to_public_key, path_to_the_file, like_signature):
-    """Verify Signature"""
+    """Verify signature."""
     try:
         if os.path.exists(path_to_public_key):
             f_key = open(path_to_public_key, 'r')
@@ -90,12 +91,12 @@ def verify(path_to_public_key, path_to_the_file, like_signature):
 @click.command()
 @click.option('-p_private', '--path_to_private_key', default=os.path.join(os.getcwd(), PRIVATE_KEY),
               prompt='Enter path to private key', type=click.Path(exists=True, dir_okay=False, readable=True),
-              help=f'Path to private key')
+              help=f'Path to private key.')
 @click.option('-p_public', '--path_to_public_key', default=os.path.join(os.getcwd(), PUBLIC_KEY),
               prompt='Enter path to save public key', type=click.Path(exists=False, dir_okay=False, readable=True),
-              help=f'Path to save public key')
+              help=f'Path to save public key.')
 def public_key(path_to_private_key, path_to_public_key):
-    """Create a public key from a private key"""
+    """Create a public key from a private key."""
     try:
         f = open(path_to_private_key, 'r')
         key = RSA.import_key(f.read())
@@ -116,9 +117,9 @@ def public_key(path_to_private_key, path_to_public_key):
 
 @click.command()
 @click.option('-p', '--path', default=os.path.join(os.getcwd(), PRIVATE_KEY), prompt='Enter path to save private key',
-              type=click.Path(exists=False, dir_okay=False, readable=True), help=f'Path to save private key')
+              type=click.Path(exists=False, dir_okay=False, readable=True), help=f'Path to save private key.')
 def private_key(path):
-    """Create private key"""
+    """Create private key."""
     key = RSA.generate(1024, os.urandom)
     repr_key = key.export_key('PEM')
     f = open(path, 'wb')
@@ -134,8 +135,8 @@ def cli():
     pass
 
 
-cli.add_command(private_key)
 cli.add_command(public_key)
+cli.add_command(private_key)
 cli.add_command(sign)
 cli.add_command(verify)
 

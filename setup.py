@@ -6,7 +6,7 @@ setup(
     py_modules=['signature'],
     install_requires=[
         'Click',
-        'Crypto'
+        'pycryptodome'
     ],
     entry_points={
         'console_scripts': [
