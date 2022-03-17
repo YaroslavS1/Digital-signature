@@ -10,6 +10,7 @@ __all__ = [
 SERVER = 'imap.yandex.ru'
 DOWNNLOAD = 'Download'
 
+
 class FetchEmail:
 
     connection = None
