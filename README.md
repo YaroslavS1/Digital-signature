@@ -29,13 +29,14 @@ Options:
   --help  Show this message and exit.
 
 Commands:
+  fetch-email  Save the file, public key and signature from the last...
   private-key  Create private key.
   public-key   Create a public key from a private key.
+  send-email   Send email with file, public key and digital signature
   sign         Sign file with digital signature.
   verify       Verify signature.
-
 ```
-## signature private-key
+### private-key
 ```
 Usage: signature private-key [OPTIONS]
 
@@ -45,7 +46,7 @@ Options:
   -p, --path FILE  Path to save private key.
   --help           Show this message and exit.
 ```
-## signature private-key
+### private-key
 ```
 Usage: signature public-key [OPTIONS]
 
@@ -59,7 +60,7 @@ Options:
   --help                          Show this message and exit.
 
 ```
-## signature sign
+### sign
 ```
 Usage: signature sign [OPTIONS]
 
@@ -74,7 +75,37 @@ Options:
                                   Path to save signature.
   --help                          Show this message and exit.
 ```
-## signature verify
+### fetch-email
+```
+Usage: signature fetch-email [OPTIONS]
+
+Save the file, public key and signature from the last email to a folder
+
+Options:
+-m, --mail TEXT       Enter the address from which you want to download
+files.
+--password TEXT
+-p_file, --path PATH  Path to save.
+--help                Show this message and exit.
+```
+### send-email
+```
+Usage: signature send-email [OPTIONS]
+
+  Send email with file, public key and digital signature
+
+Options:
+  -m, --mail TEXT                 Enter the email.
+  --password TEXT
+  -p_public, --path_public_key FILE
+                                  Path to public key.
+  -p_file, --path_file FILE       Path to file.
+  -p_signature, --path_signature FILE
+                                  Path to signature.
+  -r, --recipient TEXT            Recipient's mail.
+  --help                          Show this message and exit.
+```
+### verify
 ```
 Usage: signature verify [OPTIONS]
 
@@ -89,4 +120,3 @@ Options:
                                   Path to signature.
   --help                          Show this message and exit.
 ```
-

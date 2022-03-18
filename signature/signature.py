@@ -136,6 +136,7 @@ def private_key(path):
 @click.option('-r', '--recipient', prompt='Enter the recipient', type=click.STRING, help=f"Recipient's mail.",
               default='Iaro5laI3@yandex.ru')
 def send_email(mail, password, path_public_key, path_file, path_signature, recipient):
+    """Send email with file, public key and digital signature"""
     send_email_(
         files=(path_public_key, path_file, path_signature),
         recipients=recipient,
@@ -150,6 +151,7 @@ def send_email(mail, password, path_public_key, path_file, path_signature, recip
 @click.option('-p_file', '--path', default=os.path.join(os.getcwd(), DOWNNLOAD), prompt='Enter path to save',
               type=click.Path(exists=False, dir_okay=True, readable=True), help=f'Path to save.')
 def fetch_email(mail, password, path):
+    """Save the file, public key and signature from the last email to a folder"""
     a = FetchEmail(username=mail, password=password)
     a.save_attachment(a.fetch_unread_messages()[0], path)
 
@@ -165,7 +167,3 @@ cli.add_command(sign)
 cli.add_command(verify)
 cli.add_command(send_email)
 cli.add_command(fetch_email)
-
-
-if __name__ == '__main__':
-    cli()
