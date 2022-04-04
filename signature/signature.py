@@ -1,10 +1,10 @@
 import os
 
-import click
+# import click
 from Crypto.PublicKey import RSA
 from Crypto.Signature import pkcs1_15
 
-from fetch_email import DOWNLOAD
+# from fetch_email import DOWNLOAD
 from fetch_email import FetchEmail
 from helpers import get_hash
 from send_email import send_email as send_email_
@@ -16,15 +16,6 @@ FILE = 'example.txt'
 SIGNATURE = 'signature.sgn'
 
 
-@click.command()
-@click.option('-p_private', '--path_private_key', default=os.path.join(os.getcwd(), PRIVATE_KEY),
-              prompt='Введите путь до приватного ключа', type=click.Path(exists=True, dir_okay=False, readable=True),
-              help=f'Path to private key.')
-@click.option('-p_file', '--path_file', default=os.path.join(os.getcwd(), FILE), prompt='Введите путь до файла',
-              type=click.Path(exists=True, dir_okay=False, readable=True), help=f'Path to file.')
-@click.option('-p_signature', '--path_signature', default=os.path.join(os.getcwd(), SIGNATURE),
-              prompt='Введите путь куда хотите сохранить подписи', type=click.Path(exists=False, dir_okay=False, readable=True),
-              help=f'Path to save signature.')
 def sign(path_private_key, path_file, path_signature):
     """Sign file with digital signature."""
     try:
@@ -40,18 +31,9 @@ def sign(path_private_key, path_file, path_signature):
     f.write(signature)
     f.close()
 
-    click.echo(f'\033[32mSignature saved - {path_signature}')
+    print(f'Signature saved - {path_signature}')
 
 
-@click.command()
-@click.option('-p_public', '--path_public_key', default=os.path.join(os.path.join(os.getcwd(), DOWNLOAD), PUBLIC_KEY),
-              prompt='Введите путь до публичного ключа', type=click.STRING,
-              help=f'Path to public key or public key directly.')
-@click.option('-p_file', '--path_file', default=os.path.join(os.path.join(os.getcwd(), DOWNLOAD), FILE), prompt='Введите путь до файла который хотите подписать',
-              type=click.Path(exists=True, dir_okay=False, readable=True), help=f'Path to file.')
-@click.option('-p_signature', '--path_signature', default=os.path.join(os.path.join(os.getcwd(), DOWNLOAD), SIGNATURE),
-              prompt='Введите путь до подписать', type=click.Path(exists=True, dir_okay=False, readable=True),
-              help=f'Path to signature.')
 def verify(path_public_key, path_file, path_signature):
     """Verify signature."""
     try:
@@ -70,18 +52,11 @@ def verify(path_public_key, path_file, path_signature):
     try:
         pkcs1_15.new(pubkey).verify(h, signature)
     except ValueError:
-        click.echo(f'\033[4m\033[31mПодпись для файла {path_file} не действительна')
+        print(f'Подпись для файла {path_file} не действительна')
     else:
-        click.echo(f'\033[4m\033[32mПодпись для файла {path_file} действительна')
+        print(f'Подпись для файла {path_file} действительна')
 
 
-@click.command()
-@click.option('-p_private', '--path_private_key', default=os.path.join(os.getcwd(), PRIVATE_KEY),
-              prompt='Введите путь до приватного ключа', type=click.Path(exists=True, dir_okay=False, readable=True),
-              help=f'Path to private key.')
-@click.option('-p_public', '--path_public_key', default=os.path.join(os.getcwd(), PUBLIC_KEY),
-              prompt='Введите путь куда хотите сохранить публичный ключ', type=click.Path(exists=False, dir_okay=False, readable=True),
-              help=f'Path to save public key.')
 def public_key(path_private_key, path_public_key):
     """Create a public key from a private key."""
     try:
@@ -96,13 +71,10 @@ def public_key(path_private_key, path_public_key):
     f.write(repr_pubkey)
     f.close()
 
-    click.echo(f'\033[32mПубличный ключь созранен по адресу - {path_public_key}\n'
-               f'\033[34m\033[2m{repr_pubkey.decode("utf-8")}\033[0m\n')
+    print(f'Публичный ключь созранен по адресу - {path_public_key}\n'
+          f'{repr_pubkey.decode("utf-8")}')
 
 
-@click.command()
-@click.option('-p', '--path', default=os.path.join(os.getcwd(), PRIVATE_KEY), prompt='Введите путь куда хотите сохранить приватный ключ',
-              type=click.Path(exists=False, dir_okay=False, readable=True), help=f'Path to save private key.')
 def private_key(path):
     """Create private key."""
     key = RSA.generate(1024, os.urandom)
@@ -111,24 +83,10 @@ def private_key(path):
     f.write(repr_key)
     f.close()
 
-    click.echo(f'\033[32mПриватный ключь созранен по адресу - {path}\n'
-               f'\033[34m\033[2m{repr_key.decode("utf-8")}')
+    print(f'Приватный ключь созранен по адресу - {path}\n'
+          f'{repr_key.decode("utf-8")}')
 
 
-@click.command()
-@click.option('-m', '--mail', prompt='Введите адрес электронной почты с которого хотите отправить письмо', type=click.STRING,
-              help=f'Enter the email.', default='Iaro5laI3@yandex.ru')
-@click.password_option(confirmation_prompt=False)
-@click.option('-p_public', '--path_public_key', default=os.path.join(os.getcwd(), PUBLIC_KEY),
-              prompt='Введите путь до приватного ключа',
-              type=click.Path(exists=True, dir_okay=False, readable=True), help=f'Path to public key.')
-@click.option('-p_file', '--path_file', default=os.path.join(os.getcwd(), FILE), prompt='Введите путь до файла',
-              type=click.Path(exists=True, dir_okay=False, readable=True), help=f'Path to file.')
-@click.option('-p_signature', '--path_signature', default=os.path.join(os.getcwd(), SIGNATURE),
-              prompt='Введите путь до подписи', type=click.Path(exists=True, dir_okay=False, readable=True),
-              help=f'Path to signature.')
-@click.option('-r', '--recipient', prompt='Введите адрес куда отправить', type=click.STRING, help=f"Recipient's mail.",
-              default='Iaro5laI3@yandex.ru')
 def send_email(mail, password, path_public_key, path_file, path_signature, recipient):
     """Send email with file, public key and digital signature"""
     send_email_(
@@ -138,12 +96,6 @@ def send_email(mail, password, path_public_key, path_file, path_signature, recip
         password=password)
 
 
-@click.command()
-@click.option('-m', '--mail', prompt='Введите адрес', type=click.STRING,
-              help=f'Enter the address from which you want to download files.', default='Iaro5laI3@yandex.ru')
-@click.password_option(confirmation_prompt=False)
-@click.option('-p_file', '--path', default=os.path.join(os.getcwd(), DOWNLOAD), prompt='Введите путь куда сохранить',
-              type=click.Path(exists=False, dir_okay=True, readable=True), help=f'Path to save.')
 def fetch_email(mail, password, path):
     """Save the file, public key and signature from the last email to a folder"""
     walker = FetchEmail(username=mail, password=password)
@@ -151,14 +103,69 @@ def fetch_email(mail, password, path):
     walker.save_attachment(msgs, path)
 
 
-@click.group()
 def cli():
-    pass
-
-
-cli.add_command(private_key)
-cli.add_command(public_key)
-cli.add_command(sign)
-cli.add_command(verify)
-cli.add_command(send_email)
-cli.add_command(fetch_email)
+    print(f'Выбирете команду:\n'
+          f'1 - Создать приватный ключь\n'
+          f'2 - Создать публичный ключ\n'
+          f'3 - Подписать'
+          f'4 - Отправить письмо\n'
+          f'5 - Получить письмо\n'
+          f'6 - Проверить подпись\n'
+          f'0 - Выйти')
+    key = int(input())
+    if key == 1:
+        print('Введите путь куда хотите сохранить приватный ключь')
+        path = input()
+        private_key(path)
+        cli()
+    elif key == 2:
+        print('Введите путь до приватного ключа')
+        path_privat = input()
+        print('Введите путь куда хотите сохранить приватный ключь')
+        path_public = input()
+        public_key(path_privat, path_public)
+        cli()
+    elif key == 3:
+        print('Введите путь до приватного ключа')
+        path_privat = input()
+        print('Введите путь до файла')
+        path_file = input()
+        print('Введите путь по которому хотите сохранить подпись')
+        path_sign = input()
+        sign(path_privat, path_file, path_sign)
+        cli()
+    elif key == 4:
+        print('Введите адрес электронной почты с которого хотите отправить письмо')
+        mail = input()
+        print('Пароль')
+        passord = input()
+        print('Введите путь до приватного ключа')
+        path_private = input()
+        print('Введите путь до файла')
+        path_file = input()
+        print('Введите путь до подписи')
+        path_sign = input()
+        print('Введите почту куда отправить')
+        mail_ = input()
+        send_email(mail, passord, path_private, path_file, path_sign, mail_)
+        cli()
+    elif key == 5:
+        print('Введите адрес электронной почты')
+        mail = input()
+        print('Пароль')
+        passord = input()
+        print('Введите куда сохранить файлы полученные поп почте')
+        path = input()
+        fetch_email(mail, passord, path)
+        cli()
+    elif key == 6:
+        print('Введите путь до приватного ключа')
+        path_privat = input()
+        print('Введите путь до файла')
+        path_file = input()
+        print('Введите путь по которому хотите сохранить подпись')
+        path_sign = input()
+        verify(path_privat, path_file, path_sign)
+        cli()
+    elif key == 0:
+        return None
