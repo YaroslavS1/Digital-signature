@@ -9,8 +9,8 @@ from platform import python_version
 __all__ = ['send_email']
 
 SERVER = 'smtp.yandex.ru'
-SUBJECT = 'ЭЦП'
-TEXT = 'ЭЦП'
+SUBJECT = 'Очень важные документы'
+TEXT = 'Лаборвторна рвбота Дмитрия Гришиа'
 HTML = '<html><head></head><body><p> ' + TEXT + '</p></body></html>'
 
 
@@ -34,10 +34,10 @@ def send_email(files, recipients, user, password):
         basename = os.path.basename(filepath)
         filesize = os.path.getsize(filepath)
 
-        part_file = MIMEBase('application', 'octet-stream; name="{}"'.format(basename))
+        part_file = MIMEBase('application', f'octet-stream; name="{basename}"')
         part_file.set_payload(open(filepath, "rb").read())
         part_file.add_header('Content-Description', basename)
-        part_file.add_header('Content-Disposition', 'attachment; filename="{}"; size={}'.format(basename, filesize))
+        part_file.add_header('Content-Disposition', f'attachment; filename="{basename}"; size={filesize}')
         encoders.encode_base64(part_file)
         msg.attach(part_file)
 

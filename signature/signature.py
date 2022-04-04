@@ -4,7 +4,7 @@ import click
 from Crypto.PublicKey import RSA
 from Crypto.Signature import pkcs1_15
 
-from fetch_email import DOWNNLOAD
+from fetch_email import DOWNLOAD
 from fetch_email import FetchEmail
 from helpers import get_hash
 from send_email import send_email as send_email_
@@ -44,12 +44,12 @@ def sign(path_private_key, path_file, path_signature):
 
 
 @click.command()
-@click.option('-p_public', '--path_public_key', default=os.path.join(os.path.join(os.getcwd(), DOWNNLOAD), PUBLIC_KEY),
+@click.option('-p_public', '--path_public_key', default=os.path.join(os.path.join(os.getcwd(), DOWNLOAD), PUBLIC_KEY),
               prompt='Введите путь до публичного ключа', type=click.STRING,
               help=f'Path to public key or public key directly.')
-@click.option('-p_file', '--path_file', default=os.path.join(os.path.join(os.getcwd(), DOWNNLOAD), FILE), prompt='Введите путь до файла который хотите подписать',
+@click.option('-p_file', '--path_file', default=os.path.join(os.path.join(os.getcwd(), DOWNLOAD), FILE), prompt='Введите путь до файла который хотите подписать',
               type=click.Path(exists=True, dir_okay=False, readable=True), help=f'Path to file.')
-@click.option('-p_signature', '--path_signature', default=os.path.join(os.path.join(os.getcwd(), DOWNNLOAD), SIGNATURE),
+@click.option('-p_signature', '--path_signature', default=os.path.join(os.path.join(os.getcwd(), DOWNLOAD), SIGNATURE),
               prompt='Введите путь до подписать', type=click.Path(exists=True, dir_okay=False, readable=True),
               help=f'Path to signature.')
 def verify(path_public_key, path_file, path_signature):
@@ -97,9 +97,7 @@ def public_key(path_private_key, path_public_key):
     f.close()
 
     click.echo(f'\033[32mПубличный ключь созранен по адресу - {path_public_key}\n'
-               f'\033[34m\033[2m{repr_pubkey.decode("utf-8")}\033[0m\n'
-               f'\nFOR COPY:\n'
-               f'\033[35m{str(repr_pubkey)[2:-1]}')
+               f'\033[34m\033[2m{repr_pubkey.decode("utf-8")}\033[0m\n')
 
 
 @click.command()
@@ -144,7 +142,7 @@ def send_email(mail, password, path_public_key, path_file, path_signature, recip
 @click.option('-m', '--mail', prompt='Введите адрес', type=click.STRING,
               help=f'Enter the address from which you want to download files.', default='Iaro5laI3@yandex.ru')
 @click.password_option(confirmation_prompt=False)
-@click.option('-p_file', '--path', default=os.path.join(os.getcwd(), DOWNNLOAD), prompt='Введите путь куда сохранить',
+@click.option('-p_file', '--path', default=os.path.join(os.getcwd(), DOWNLOAD), prompt='Введите путь куда сохранить',
               type=click.Path(exists=False, dir_okay=True, readable=True), help=f'Path to save.')
 def fetch_email(mail, password, path):
     """Save the file, public key and signature from the last email to a folder"""

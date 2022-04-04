@@ -4,11 +4,11 @@ import os
 
 __all__ = [
     'FetchEmail',
-    'DOWNNLOAD'
+    'DOWNLOAD'
 ]
 
 SERVER = 'imap.yandex.ru'
-DOWNNLOAD = 'Download'
+DOWNLOAD = 'Download'
 
 
 class FetchEmail:
@@ -28,7 +28,7 @@ class FetchEmail:
         self.connection.close()
 
     @staticmethod
-    def save_attachment(msg, download_folder=os.path.join(os.getcwd(), DOWNNLOAD)):
+    def save_attachment(msg, download_folder=os.path.join(os.getcwd(), DOWNLOAD)):
         """
         Given a message, save its attachments to the specified
         download folder (default is /tmp)

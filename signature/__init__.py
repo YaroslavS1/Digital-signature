@@ -1,4 +1,4 @@
-from .fetch_email import DOWNNLOAD
+from .fetch_email import DOWNLOAD
 from .fetch_email import FetchEmail
 from .helpers import get_hash
 from .helpers import sanitize_key
@@ -9,5 +9,5 @@ __all__ = [
     'FetchEmail',
     'sanitize_key',
     'get_hash',
-    'DOWNNLOAD'
+    'DOWNLOAD',
 ]
