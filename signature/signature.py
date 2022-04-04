@@ -7,7 +7,6 @@ from Crypto.Signature import pkcs1_15
 from fetch_email import DOWNNLOAD
 from fetch_email import FetchEmail
 from helpers import get_hash
-from helpers import sanitize_key
 from send_email import send_email as send_email_
 
 PRIVATE_KEY = 'private_key.pem'
@@ -19,12 +18,12 @@ SIGNATURE = 'signature.sgn'
 
 @click.command()
 @click.option('-p_private', '--path_private_key', default=os.path.join(os.getcwd(), PRIVATE_KEY),
-              prompt='Enter path to private key', type=click.STRING,
+              prompt='Введите путь до приватного ключа', type=click.Path(exists=True, dir_okay=False, readable=True),
               help=f'Path to private key.')
-@click.option('-p_file', '--path_file', default=os.path.join(os.getcwd(), FILE), prompt='Enter path to file',
+@click.option('-p_file', '--path_file', default=os.path.join(os.getcwd(), FILE), prompt='Введите путь до файла',
               type=click.Path(exists=True, dir_okay=False, readable=True), help=f'Path to file.')
 @click.option('-p_signature', '--path_signature', default=os.path.join(os.getcwd(), SIGNATURE),
-              prompt='Enter path to save signature', type=click.Path(exists=False, dir_okay=False, readable=True),
+              prompt='Введите путь куда хотите сохранить подписи', type=click.Path(exists=False, dir_okay=False, readable=True),
               help=f'Path to save signature.')
 def sign(path_private_key, path_file, path_signature):
     """Sign file with digital signature."""
@@ -45,22 +44,19 @@ def sign(path_private_key, path_file, path_signature):
 
 
 @click.command()
-@click.option('-p_public', '--path_public_key', default=os.path.join(os.getcwd(), PUBLIC_KEY),
-              prompt='Enter path to public key or public key directly', type=click.STRING,
+@click.option('-p_public', '--path_public_key', default=os.path.join(os.path.join(os.getcwd(), DOWNNLOAD), PUBLIC_KEY),
+              prompt='Введите путь до публичного ключа', type=click.STRING,
               help=f'Path to public key or public key directly.')
-@click.option('-p_file', '--path_file', default=os.path.join(os.getcwd(), FILE), prompt='Enter path to file',
+@click.option('-p_file', '--path_file', default=os.path.join(os.path.join(os.getcwd(), DOWNNLOAD), FILE), prompt='Введите путь до файла который хотите подписать',
               type=click.Path(exists=True, dir_okay=False, readable=True), help=f'Path to file.')
-@click.option('-p_signature', '--path_signature', default=os.path.join(os.getcwd(), SIGNATURE),
-              prompt='Enter path to signature', type=click.Path(exists=True, dir_okay=False, readable=True),
+@click.option('-p_signature', '--path_signature', default=os.path.join(os.path.join(os.getcwd(), DOWNNLOAD), SIGNATURE),
+              prompt='Введите путь до подписать', type=click.Path(exists=True, dir_okay=False, readable=True),
               help=f'Path to signature.')
 def verify(path_public_key, path_file, path_signature):
     """Verify signature."""
     try:
-        if os.path.exists(path_public_key):
-            f_key = open(path_public_key, 'r')
-            pubkey = RSA.import_key(f_key.read())
-        else:
-            pubkey = RSA.import_key(sanitize_key(path_public_key))
+        f_key = open(path_public_key, 'r')
+        pubkey = RSA.import_key(f_key.read())
     except Exception as e:
         raise ValueError(e)
 
@@ -74,17 +70,17 @@ def verify(path_public_key, path_file, path_signature):
     try:
         pkcs1_15.new(pubkey).verify(h, signature)
     except ValueError:
-        click.echo(f'\033[4m\033[31mThe signature for file {path_file} not valid')
+        click.echo(f'\033[4m\033[31mПодпись для файла {path_file} не действительна')
     else:
-        click.echo(f'\033[4m\033[32mThe signature for file {path_file} is valid')
+        click.echo(f'\033[4m\033[32mПодпись для файла {path_file} действительна')
 
 
 @click.command()
 @click.option('-p_private', '--path_private_key', default=os.path.join(os.getcwd(), PRIVATE_KEY),
-              prompt='Enter path to private key', type=click.Path(exists=True, dir_okay=False, readable=True),
+              prompt='Введите путь до приватного ключа', type=click.Path(exists=True, dir_okay=False, readable=True),
               help=f'Path to private key.')
 @click.option('-p_public', '--path_public_key', default=os.path.join(os.getcwd(), PUBLIC_KEY),
-              prompt='Enter path to save public key', type=click.Path(exists=False, dir_okay=False, readable=True),
+              prompt='Введите путь куда хотите сохранить публичный ключ', type=click.Path(exists=False, dir_okay=False, readable=True),
               help=f'Path to save public key.')
 def public_key(path_private_key, path_public_key):
     """Create a public key from a private key."""
@@ -92,7 +88,7 @@ def public_key(path_private_key, path_public_key):
         f = open(path_private_key, 'r')
         key = RSA.import_key(f.read())
     except FileNotFoundError:
-        raise FileNotFoundError('Private key not found')
+        raise FileNotFoundError('Приватный ключ не найден')
 
     pubkey = key.publickey()
     repr_pubkey = pubkey.export_key('PEM')
@@ -100,14 +96,14 @@ def public_key(path_private_key, path_public_key):
     f.write(repr_pubkey)
     f.close()
 
-    click.echo(f'\033[32mPublic key saved - {path_public_key}\n'
+    click.echo(f'\033[32mПубличный ключь созранен по адресу - {path_public_key}\n'
                f'\033[34m\033[2m{repr_pubkey.decode("utf-8")}\033[0m\n'
                f'\nFOR COPY:\n'
                f'\033[35m{str(repr_pubkey)[2:-1]}')
 
 
 @click.command()
-@click.option('-p', '--path', default=os.path.join(os.getcwd(), PRIVATE_KEY), prompt='Enter path to save private key',
+@click.option('-p', '--path', default=os.path.join(os.getcwd(), PRIVATE_KEY), prompt='Введите путь куда хотите сохранить приватный ключ',
               type=click.Path(exists=False, dir_okay=False, readable=True), help=f'Path to save private key.')
 def private_key(path):
     """Create private key."""
@@ -117,23 +113,23 @@ def private_key(path):
     f.write(repr_key)
     f.close()
 
-    click.echo(f'\033[32mPrivate key saved - {path}\n'
+    click.echo(f'\033[32mПриватный ключь созранен по адресу - {path}\n'
                f'\033[34m\033[2m{repr_key.decode("utf-8")}')
 
 
 @click.command()
-@click.option('-m', '--mail', prompt='Address from which you want to send an email.', type=click.STRING,
+@click.option('-m', '--mail', prompt='Введите адрес электронной почты с которого хотите отправить письмо', type=click.STRING,
               help=f'Enter the email.', default='Iaro5laI3@yandex.ru')
 @click.password_option(confirmation_prompt=False)
 @click.option('-p_public', '--path_public_key', default=os.path.join(os.getcwd(), PUBLIC_KEY),
-              prompt='Enter path to public key or public key directly',
+              prompt='Введите путь до приватного ключа',
               type=click.Path(exists=True, dir_okay=False, readable=True), help=f'Path to public key.')
-@click.option('-p_file', '--path_file', default=os.path.join(os.getcwd(), FILE), prompt='Enter path to file',
+@click.option('-p_file', '--path_file', default=os.path.join(os.getcwd(), FILE), prompt='Введите путь до файла',
               type=click.Path(exists=True, dir_okay=False, readable=True), help=f'Path to file.')
 @click.option('-p_signature', '--path_signature', default=os.path.join(os.getcwd(), SIGNATURE),
-              prompt='Enter path to signature', type=click.Path(exists=True, dir_okay=False, readable=True),
+              prompt='Введите путь до подписи', type=click.Path(exists=True, dir_okay=False, readable=True),
               help=f'Path to signature.')
-@click.option('-r', '--recipient', prompt='Enter the recipient', type=click.STRING, help=f"Recipient's mail.",
+@click.option('-r', '--recipient', prompt='Введите адрес куда отправить', type=click.STRING, help=f"Recipient's mail.",
               default='Iaro5laI3@yandex.ru')
 def send_email(mail, password, path_public_key, path_file, path_signature, recipient):
     """Send email with file, public key and digital signature"""
@@ -145,15 +141,16 @@ def send_email(mail, password, path_public_key, path_file, path_signature, recip
 
 
 @click.command()
-@click.option('-m', '--mail', prompt='Enter email address', type=click.STRING,
+@click.option('-m', '--mail', prompt='Введите адрес', type=click.STRING,
               help=f'Enter the address from which you want to download files.', default='Iaro5laI3@yandex.ru')
 @click.password_option(confirmation_prompt=False)
-@click.option('-p_file', '--path', default=os.path.join(os.getcwd(), DOWNNLOAD), prompt='Enter path to save',
+@click.option('-p_file', '--path', default=os.path.join(os.getcwd(), DOWNNLOAD), prompt='Введите путь куда сохранить',
               type=click.Path(exists=False, dir_okay=True, readable=True), help=f'Path to save.')
 def fetch_email(mail, password, path):
     """Save the file, public key and signature from the last email to a folder"""
-    a = FetchEmail(username=mail, password=password)
-    a.save_attachment(a.fetch_unread_messages()[0], path)
+    walker = FetchEmail(username=mail, password=password)
+    msgs = walker.fetch_unread_messages()[0]
+    walker.save_attachment(msgs, path)
 
 
 @click.group()
@@ -161,8 +158,8 @@ def cli():
     pass
 
 
-cli.add_command(public_key)
 cli.add_command(private_key)
+cli.add_command(public_key)
 cli.add_command(sign)
 cli.add_command(verify)
 cli.add_command(send_email)
